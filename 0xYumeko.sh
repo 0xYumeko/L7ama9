@@ -1,25 +1,30 @@
 #!/bin/bash
 
-# File li fih usernames
 usernames_file="usernames.txt"
 
-# Define colors
 GREEN='\033[0;32m'
 BLUE='\033[1;34m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-# Define borders and icons
 BORDER='════════════════════════════════════'
 SUCCESS_ICON='✔️'
 ERROR_ICON='❌'
 INFO_ICON='ℹ️'
+LIST_ICON='📋'
 
-# Define logo
-LOGO='🌀 0xYumeko 🌀'
+LOGO='
+  _  __       __         __     _  _          
+ | |/ /      / /        / /    | || |         
+ |   /      / /_  __   / /_    | || |__   __ _ 
+ |  <      | __ \|  \ / __ \   |__   _ \ / _` |
+ | . \     | |_) |  / | | | |     | | | | (_| |
+ |_|\_\    |_.__/|_/  |_| |_|     |_| |_|\__, |
+                                          __/ | 
+                                         |___/  
+'
 
-# Function li kat dir countdown
 countdown() {
     local seconds=$1
     while [ $seconds -gt 0 ]; do
@@ -30,13 +35,11 @@ countdown() {
     echo -e "${YELLOW}[Time's up!]${NC}"
 }
 
-# Check if the file exists
 if [[ ! -f "$usernames_file" ]]; then
     echo -e "${RED}${ERROR_ICON} Error: File not found!${NC}"
     exit 1
 fi
 
-# Function li kat ikhtar username mn list w tdir encryption
 select_random_user_and_encode() {
     total_users=$(wc -l < "$usernames_file")
     random_line=$((RANDOM % total_users + 1))
@@ -50,7 +53,6 @@ select_random_user_and_encode() {
     echo -e "${GREEN}${SUCCESS_ICON} Operation completed successfully!${NC}"
 }
 
-# Function li katzid username jdid llist
 add_username() {
     read -p "Enter the new username to add: " new_username
     if [[ -z "$new_username" ]]; then
@@ -62,7 +64,6 @@ add_username() {
     echo -e "${GREEN}${SUCCESS_ICON} Username added successfully.${NC}"
 }
 
-# Function li katdir decryption mn Base64
 decode_base64() {
     read -p "Enter the Base64 encoded username to decode: " encoded_username
     if [[ -z "$encoded_username" ]]; then
@@ -78,20 +79,30 @@ decode_base64() {
     echo -e "${YELLOW}$BORDER${NC}"
 }
 
-# Loop bach tkhdm script mn lool
-while true; do
-    # Mat3awdch t3mel clear screen, ibqa kayzid lmenu fou9 natija li fatat
+list_usernames() {
+    echo -e "${YELLOW}$BORDER${NC}"
+    echo -e "${BLUE}${LIST_ICON} ${LOGO} ${NC}"
+    echo -e "${BLUE}${INFO_ICON} List of usernames:${NC}"
 
+    while IFS= read -r username; do
+        echo -e "${GREEN}- $username${NC}"
+    done < "$usernames_file"
+
+    echo -e "${YELLOW}$BORDER${NC}"
+}
+
+while true; do
     echo -e "${BLUE}${LOGO}${NC}"
     echo "Select an option (you have 30 seconds):"
     echo "1. Select random username and encode"
     echo "2. Add new username to list"
     echo "3. Decode Base64 encoded username"
-    echo "4. Exit"
+    echo "4. List all usernames"
+    echo "5. Exit"
     
     countdown 2
     
-    read -p "Enter your choice [1, 2, 3, or 4]: " choice
+    read -p "Enter your choice [1, 2, 3, 4, or 5]: " choice
 
     case $choice in
         1)
@@ -104,6 +115,9 @@ while true; do
             decode_base64
             ;;
         4)
+            list_usernames
+            ;;
+        5)
             echo "Exiting the script. Goodbye!"
             break
             ;;
